@@ -1,6 +1,8 @@
 import { Component, inject, input, output} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccountsService } from '../_services/accounts.service';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -11,6 +13,8 @@ import { AccountsService } from '../_services/accounts.service';
 })
 export class RegisterComponent {
   private accountService = inject(AccountsService)
+  private toastr = inject(ToastrService)
+  private router = inject(Router);
   cancelRegister = output<boolean>();
   model: any = {}
 
@@ -18,9 +22,11 @@ export class RegisterComponent {
     this.accountService.register(this.model).subscribe({
       next: response =>{
         console.log(response);
+        this.toastr.success('Welcome to DatingApp'+' '+response.username);
+        this.router.navigateByUrl('/members')
         this.cancel();
       },
-      error:error => console.log(error)
+      error:error => this.toastr.error(error.error)
     });
   }
 
